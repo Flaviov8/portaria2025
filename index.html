@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Vivace Encomendas</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Reset e Estilos Globais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Login Page */
+        .login-container {
+            max-width: 450px;
+            margin: 5% auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 2rem;
+        }
+
+        .logo img {
+            width: 100px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-login:hover {
+            background-color: #2980b9;
+        }
+
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        /* Página Principal (oculta inicialmente) */
+        #mainApp {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div id="loginPage">
+        <div class="login-container">
+            <div class="logo">
+                <img src="images/logo.png" alt="Logo Vivace">
+                <h1>Vivace Encomendas</h1>
+            </div>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="username"><i class="fas fa-user"></i> Usuário</label>
+                    <input type="text" id="username" placeholder="Digite seu usuário" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="password"><i class="fas fa-lock"></i> Senha</label>
+                    <input type="password" id="password" placeholder="Digite sua senha" required>
+                </div>
+                
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+                
+                <div class="error-message" id="errorMessage">
+                    Usuário ou senha incorretos. Tente novamente.
+                </div>
+            </form>
+            
+            <div class="footer">
+                Sistema de Controle de Encomendas &copy; <span id="currentYear"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aplicação Principal (oculta inicialmente) -->
+    <div id="mainApp">
+        <header>
+            <div class="header-container">
+                <img src="images/logo.png" alt="Logo" class="logo">
+                <h1>Registro de Encomendas Vivace</h1>
+                <nav>
+                    <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                </nav>
+            </div>
+        </header>
+        
+        <main>
+            <div class="container">
+                <form id="encomendaForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="transportadora"><i class="fas fa-truck"></i> Transportadora</label>
+                            <select id="transportadora" required>
+                                <option value="">Selecione...</option>
+                                <option value="Correios">Correios</option>
+                                <option value="Mercado Livre">Mercado Livre</option>
+                                <option value="Amazon">Amazon</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="data"><i class="far fa-calendar-alt"></i> Data</label>
+                            <input type="datetime-local" id="data" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="apartamento"><i class="fas fa-building"></i> Apartamento</label>
+                            <input type="text" id="apartamento" placeholder="Número do apto" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="morador"><i class="fas fa-user"></i> Morador</label>
+                            <input type="text" id="morador" placeholder="Nome do morador" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="telefone"><i class="fas fa-phone"></i> Telefone (WhatsApp)</label>
+                            <input type="tel" id="telefone" placeholder="(00) 00000-0000" required>
+                            <small class="hint">Formato: (DDD) 99999-9999</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tipo-encomenda"><i class="fas fa-box"></i> Tipo de Encomenda</label>
+                            <select id="tipo-encomenda">
+                                <option value="Pequena">Pequena</option>
+                                <option value="Média">Média</option>
+                                <option value="Grande">Grande</option>
+                                <option value="Frágil">Frágil</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="observacoes"><i class="fas fa-edit"></i> Observações</label>
+                        <textarea id="observacoes" rows="3" placeholder="Detalhes da encomenda, número de rastreamento, etc."></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="foto"><i class="fas fa-camera"></i> Foto da Encomenda (opcional)</label>
+                            <input type="file" id="foto" accept="image/*">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="local-armazenamento"><i class="fas fa-archive"></i> Local de Armazenamento</label>
+                            <select id="local-armazenamento">
+                                <option value="Portaria">Portaria</option>
+                                <option value="Depósito">Depósito</option>
+                                <option value="Sala de Encomendas">Sala de Encomendas</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Registrar e Notificar
+                        </button>
+                        <button type="button" id="notificarBtn" class="btn-secondary">
+                            <i class="fab fa-whatsapp"></i> Enviar WhatsApp
+                        </button>
+                        <button type="reset" class="btn-cancel">
+                            <i class="fas fa-times"></i> Limpar
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="recent-entries">
+                    <div class="section-header">
+                        <h2><i class="fas fa-history"></i> Registros Recentes</h2>
+                        <div class="search-box">
+                            <input type="text" id="searchInput" placeholder="Buscar encomendas...">
+                            <button id="searchBtn"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="recentTable">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Transportadora</th>
+                                    <th>Apto</th>
+                                    <th>Morador</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dados serão preenchidos via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <div class="table-info">
+                            Mostrando <span id="showingCount">0</span> de <span id="totalCount">0</span> registros
+                        </div>
+                        <div class="pagination">
+                            <button id="prevPage"><i class="fas fa-chevron-left"></i></button>
+                            <span id="currentPage">1</span>
+                            <button id="nextPage"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <div class="footer-content">
+                <p>Sistema de Controle de Encomendas &copy; <span id="currentYearMain"></span></p>
+                <div class="footer-links">
+                    <a href="#"><i class="fas fa-question-circle"></i> Ajuda</a>
+                    <a href="#"><i class="fas fa-cog"></i> Configurações</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Credenciais válidas (em produção, isso deve ser substituído por autenticação segura no servidor)
+        const validUsers = [
+            { username: 'portaria', password: 'vivace123', name: 'Portaria' },
+            { username: 'admin', password: 'admin123', name: 'Administrador' },
+            { username: 'zelador', password: 'zelador123', name: 'Zeladoria' }
+        ];
+
+        // Elementos da tela de login
+        const loginPage = document.getElementById('loginPage');
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const mainApp = document.getElementById('mainApp');
+
+        // Atualizar ano no footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        document.getElementById('currentYearMain').textContent = new Date().getFullYear();
+
+        // Evento de login
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Verificar credenciais
+            const user = validUsers.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                // Login bem-sucedido
+                errorMessage.style.display = 'none';
+                loginPage.style.display = 'none';
+                mainApp.style.display = 'block';
+                
+                // Armazenar informações do usuário (em produção, usar métodos mais seguros)
+                sessionStorage.setItem('loggedIn', 'true');
+                sessionStorage.setItem('username', user.username);
+                sessionStorage.setItem('userRole', user.name);
+                
+                // Inicializar a aplicação principal
+                initializeApp();
+            } else {
+                // Login falhou
+                errorMessage.style.display = 'block';
+            }
+        });
+
+        // Verificar se já está logado ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            if (sessionStorage.getItem('loggedIn') === 'true') {
+                loginPage.style.display = 'none';
+                mainApp.style.display = 'block';
+                initializeApp();
+            }
+        });
+
+        // Botão de logout
+        document.getElementById('logoutBtn')?.addEventListener('click', function() {
+            sessionStorage.removeItem('loggedIn');
+            sessionStorage.removeItem('username');
+            sessionStorage.removeItem('userRole');
+            window.location.reload();
+        });
+
+        // Inicializar a aplicação principal
+        function initializeApp() {
+            // Configurações de notificação
+            const notificationConfig = {
+                emailEnabled: false,
+                whatsappEnabled: true,
+                emailApiKey: '',
+                whatsappApiKey: ''
+            };
+
+            // Dados simulados
+            let encomendas = JSON.parse(localStorage.getItem('encomendas')) || [];
+
+            // Máscara para telefone
+            document.getElementById('telefone')?.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.length > 11) {
+                    value = value.substring(0, 11);
+                }
+                
+                if (value.length > 2) {
+                    value = `(${value.substring(0, 2)}) ${value.substring(2)}`;
+                }
+                
+                if (value.length > 10) {
+                    value = `${value.substring(0, 10)}-${value.substring(10)}`;
+                }
+                
+                e.target.value = value;
+            });
+
+            // Função para enviar notificação
+            function sendNotification(to, message) {
+                if(notificationConfig.whatsappEnabled) {
+                    sendWhatsAppNotification(to, message);
+                }
+                
+                if(notificationConfig.emailEnabled) {
+                    sendEmailNotification(to, message);
+                }
+            }
+
+            // Função para enviar mensagem pelo WhatsApp
+            function sendWhatsAppNotification(phone, message) {
+                // Limpar formatação do telefone
+                const cleanedPhone = phone.replace(/\D/g, '');
+                
+                // Verificar se tem DDI (código do país)
+                let finalPhone = cleanedPhone;
+                if (!cleanedPhone.startsWith('55') && cleanedPhone.length === 11) {
+                    finalPhone = `55${cleanedPhone}`;
+                }
+                
+                // Codificar a mensagem para URL
+                const encodedMessage = encodeURIComponent(message);
+                
+                // Criar link do WhatsApp
+                const whatsappUrl = `https://wa.me/${finalPhone}?text=${encodedMessage}`;
+                
+                // Abrir em nova aba (para teste)
+                window.open(whatsappUrl, '_blank');
+            }
+
+            // Simulação de envio por e-mail (em produção, usar API como SendGrid)
+            function sendEmailNotification(email, message) {
+                console.log(`Enviando e-mail para ${email}: ${message}`);
+                // Em produção, integrar com API de e-mail
+            }
+
+            // Formulário de registro
+            document.getElementById('encomendaForm')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const transportadora = document.getElementById('transportadora').value;
+                const data = document.getElementById('data').value;
+                const apartamento = document.getElementById('apartamento').value;
+                const morador = document.getElementById('morador').value;
+                const telefone = document.getElementById('telefone').value;
+                const tipoEncomenda = document.getElementById('tipo-encomenda').value;
+                const localArmazenamento = document.getElementById('local-armazenamento').value;
+                const observacoes = document.getElementById('observacoes').value;
+                
+                const novaEncomenda = {
+                    id: Date.now(),
+                    transportadora,
+                    data: new Date(data).toLocaleString(),
+                    apartamento,
+                    morador,
+                    telefone,
+                    tipoEncomenda,
+                    localArmazenamento,
+                    observacoes,
+                    status: 'pendente',
+                    notificado: false,
+                    dataRegistro: new Date().toISOString()
+                };
+                
+                encomendas.unshift(novaEncomenda);
+                localStorage.setItem('encomendas', JSON.stringify(encomendas));
+                
+                // Criar mensagem de notificação
+                const message = `📦 *Notificação de Encomenda* 📦\n\n` +
+                               `Olá ${morador},\n` +
+                               `Você possui uma encomenda aguardando retirada na portaria do condomínio Vivace. Solicitamos que faça a retirada o quanto antes.\n\n` +
+                               `*Detalhes:*\n` +
+                               `- Transportadora: ${transportadora}\n` +
+                               `- Tipo: ${tipoEncomenda}\n` +
+                               `- Apartamento: ${apartamento}\n` +
+                               `- Data: ${new Date(data).toLocaleString()}\n` +
+                               `- Local: ${localArmazenamento}\n` +
+                               `- Observações: ${observacoes || 'Nenhuma'}\n\n` +
+                               `Por favor, retire na portaria.`;
+                
+                // Enviar notificação
+                sendWhatsAppNotification(telefone, message);
+                
+                alert('Encomenda registrada e morador notificado via WhatsApp!');
+                carregarRegistrosRecentes();
+            });
+
+            // Notificação imediata via WhatsApp
+            document.getElementById('notificarBtn')?.addEventListener('click', function() {
+                const apartamento = document.getElementById('apartamento').value;
+                const morador = document.getElementById('morador').value;
+                const telefone = document.getElementById('telefone').value;
+                
+                if(!apartamento || !morador || !telefone) {
+                    alert('Preencha todos os campos antes de notificar.');
+                    return;
+                }
+                
+                const transportadora = document.getElementById('transportadora').value || 'Transportadora não informada';
+                const tipoEncomenda = document.getElementById('tipo-encomenda').value || 'Tipo não informado';
+                const localArmazenamento = document.getElementById('local-armazenamento').value || 'Local não informado';
+                const observacoes = document.getElementById('observacoes').value || 'Nenhuma observação';
+                
+                const message = `📦 *Notificação de Encomenda* 📦\n\n` +
+                               `Olá ${morador},\n` +
+                               `Você possui uma encomenda aguardando retirada na portaria do condomínio Vivace. Solicitamos que faça a retirada o quanto antes.\n\n` +
+                               `*Detalhes:*\n` +
+                               `- Transportadora: ${transportadora}\n` +
+                               `- Tipo: ${tipoEncomenda}\n` +
+                               `- Apartamento: ${apartamento}\n` +
+                               `- Local: ${localArmazenamento}\n` +
+                               `- Observações: ${observacoes}\n\n` +
+                               `Por favor, retire na portaria.`;
+                
+                sendWhatsAppNotification(telefone, message);
+            });
+
+            // Carregar registros recentes
+            function carregarRegistrosRecentes() {
+                const tableBody = document.getElementById('recentTable')?.querySelector('tbody');
+                if(!tableBody) return;
+                
+                tableBody.innerHTML = '';
+                
+                // Ordenar por data de registro (mais recentes primeiro)
+                const encomendasOrdenadas = [...encomendas].sort((a, b) => 
+                    new Date(b.dataRegistro) - new Date(a.dataRegistro));
+                
+                // Mostrar apenas os 10 mais recentes
+                const recentes = encomendasOrdenadas.slice(0, 10);
+                
+                recentes.forEach(encomenda => {
+                    const row = document.createElement('tr');
+                    
+                    // Ícone de status
+                    let statusIcon = '';
+                    if(encomenda.notificado) {
+                        statusIcon = `<span class="status-notificado"><i class="fas fa-check-circle"></i> Notificado</span>`;
+                    } else {
+                        statusIcon = `<span class="status-pendente"><i class="fas fa-clock"></i> Pendente</span>`;
+                    }
+                    
+                    row.innerHTML = `
+                        <td>${encomenda.data}</td>
+                        <td>${encomenda.transportadora}</td>
+                        <td>${encomenda.apartamento}</td>
+                        <td>${encomenda.morador}</td>
+                        <td>${statusIcon}</td>
+                        <td>
+                            <button class="action-btn view" data-id="${encomenda.id}">
+                                <i class="fas fa-eye"></i> Ver
+                            </button>
+                            <button class="action-btn notify" data-id="${encomenda.id}">
+                                <i class="fab fa-whatsapp"></i> Notificar
+                            </button>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+                
+                // Atualizar contadores
+                document.getElementById('showingCount').textContent = recentes.length;
+                document.getElementById('totalCount').textContent = encomendas.length;
+                
+                // Adicionar eventos aos botões
+                document.querySelectorAll('.action-btn.view').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        visualizarEncomenda(id);
+                    });
+                });
+                
+                document.querySelectorAll('.action-btn.notify').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        notificarMorador(id);
+                    });
+                });
+            }
+
+            // Visualizar encomenda
+            function visualizarEncomenda(id) {
+                const encomenda = encomendas.find(e => e.id === id);
+                if(encomenda) {
+                    alert(`📦 Detalhes da Encomenda 📦\n\n` +
+                          `Transportadora: ${encomenda.transportadora}\n` +
+                          `Tipo: ${encomenda.tipoEncomenda}\n` +
+                          `Data/Hora: ${encomenda.data}\n` +
+                          `Apartamento: ${encomenda.apartamento}\n` +
+                          `Morador: ${encomenda.morador}\n` +
+                          `Telefone: ${encomenda.telefone || 'Não informado'}\n` +
+                          `Local de Armazenamento: ${encomenda.localArmazenamento}\n` +
+                          `Status: ${encomenda.notificado ? 'Notificado' : 'Pendente'}\n` +
+                          `Observações: ${encomenda.observacoes || 'Nenhuma'}`);
+                }
+            }
+
+            // Notificar morador específico
+            function notificarMorador(id) {
+                const encomenda = encomendas.find(e => e.id === id);
+                if(!encomenda) return;
+                
+                const message = `📦 *Lembrete de Encomenda* 📦\n\n` +
+                               `Olá ${encomenda.morador},\n` +
+                               `Você possui uma encomenda aguardando retirada na portaria do condomínio Vivace. Solicitamos que faça a retirada o quanto antes.\n\n` +
+                               `*Detalhes:*\n` +
+                               `- Transportadora: ${encomenda.transportadora}\n` +
+                               `- Tipo: ${encomenda.tipoEncomenda}\n` +
+                               `- Apartamento: ${encomenda.apartamento}\n` +
+                               `- Data: ${encomenda.data}\n` +
+                               `- Local: ${encomenda.localArmazenamento}\n` +
+                               `- Observações: ${encomenda.observacoes || 'Nenhuma'}\n\n` +
+                               `Por favor, retire na portaria.`;
+                
+                if(confirm(`Enviar lembrete para ${encomenda.morador} (Apto ${encomenda.apartamento}) via WhatsApp?`)) {
+                    sendWhatsAppNotification(encomenda.telefone, message);
+                    
+                    // Atualizar status
+                    encomenda.notificado = true;
+                    encomenda.status = 'notificado';
+                    localStorage.setItem('encomendas', JSON.stringify(encomendas));
+                    carregarRegistrosRecentes();
+                }
+            }
+
+            // Inicialização
+            document.addEventListener('DOMContentLoaded', function() {
+                // Definir data/hora atual como padrão
+                const now = new Date();
+                const dataInput = document.getElementById('data');
+                if(dataInput) {
+                    const year = now.getFullYear();
+                    const month = String(now.getMonth() + 1).padStart(2, '0');
+                    const day = String(now.getDate()).padStart(2, '0');
+                    const hours = String(now.getHours()).padStart(2, '0');
+                    const minutes = String(now.getMinutes()).padStart(2, '0');
+                    
+                    dataInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+                }
+                
+                // Carregar registros
+                carregarRegistrosRecentes();
+                
+                // Configurar busca
+                document.getElementById('searchBtn')?.addEventListener('click', function() {
+                    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                    if(searchTerm) {
+                        const resultados = encomendas.filter(encomenda => 
+                            encomenda.morador.toLowerCase().includes(searchTerm) || 
+                            encomenda.apartamento.toLowerCase().includes(searchTerm) ||
+                            encomenda.transportadora.toLowerCase().includes(searchTerm)
+                        );
+                        exibirResultadosBusca(resultados);
+                    } else {
+                        carregarRegistrosRecentes();
+                    }
+                });
+            });
+
+            // Exibir resultados da busca
+            function exibirResultadosBusca(resultados) {
+                const tableBody = document.getElementById('recentTable').querySelector('tbody');
+                tableBody.innerHTML = '';
+                
+                resultados.forEach(encomenda => {
+                    const row = document.createElement('tr');
+                    
+                    let statusIcon = encomenda.notificado ? 
+                        `<span class="status-notificado"><i class="fas fa-check-circle"></i> Notificado</span>` :
+                        `<span class="status-pendente"><i class="fas fa-clock"></i> Pendente</span>`;
+                    
+                    row.innerHTML = `
+                        <td>${encomenda.data}</td>
+                        <td>${encomenda.transportadora}</td>
+                        <td>${encomenda.apartamento}</td>
+                        <td>${encomenda.morador}</td>
+                        <td>${statusIcon}</td>
+                        <td>
+                            <button class="action-btn view" data-id="${encomenda.id}">
+                                <i class="fas fa-eye"></i> Ver
+                            </button>
+                            <button class="action-btn notify" data-id="${encomenda.id}">
+                                <i class="fab fa-whatsapp"></i> Notificar
+                            </button>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+                
+                document.getElementById('showingCount').textContent = resultados.length;
+                document.getElementById('totalCount').textContent = encomendas.length;
+            }
+        }
+    </script>
+</body>
+</html>
