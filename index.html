@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Vivace Encomendas</title>
     <link rel="stylesheet" href="styles.css">
+    <title>Login - Vivace Campo Limpo Encomendas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Reset e Estilos Globais */
@@ -80,7 +80,7 @@
             width: 100%;
             padding: 12px;
             background-color: #3498db;
-            color: white;
+            color: rgb(241, 237, 237);
             border: none;
             border-radius: 5px;
             font-size: 1rem;
@@ -106,9 +106,167 @@
             display: none;
         }
 
+        .success-message {
+            color: #2ecc71;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .auth-links {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .auth-links a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .auth-links a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+
+        .modal-footer {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: rgb(243, 243, 243);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #3398db;
+        }
+
+        .btn-secondary {
+            background-color: #23e47a;
+            color: #eaeef3;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #bdc3c7;
+        }
+
         /* Página Principal (oculta inicialmente) */
         #mainApp {
             display: none;
+        }
+
+        /* Admin Section */
+        .admin-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .admin-section h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .user-table th, .user-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .user-table th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .user-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
         }
     </style>
 </head>
@@ -117,8 +275,8 @@
     <div id="loginPage">
         <div class="login-container">
             <div class="logo">
-                <img src="images/logo.png" alt="Logo Vivace">
-                <h1>Vivace Encomendas</h1>
+                <img src="logovivace.png" alt="Logo Vivace">
+                <h1>Vivace Portaria</h1>
             </div>
             
             <form id="loginForm">
@@ -139,6 +297,15 @@
                 <div class="error-message" id="errorMessage">
                     Usuário ou senha incorretos. Tente novamente.
                 </div>
+                
+                <div class="success-message" id="successMessage">
+                    Operação realizada com sucesso!
+                </div>
+                
+                <div class="auth-links">
+                    <a href="#" id="forgotPasswordLink">Esqueci minha senha</a>
+                    <a href="#" id="registerLink">Cadastrar novo usuário</a>
+                </div>
             </form>
             
             <div class="footer">
@@ -147,11 +314,92 @@
         </div>
     </div>
 
+    <!-- Modal de Redefinição de Senha -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Redefinir Senha</h2>
+                <button class="close-btn" id="closeForgotPasswordModal">&times;</button>
+            </div>
+            <form id="forgotPasswordForm">
+                <div class="input-group">
+                    <label for="resetUsername">Usuário</label>
+                    <input type="text" id="resetUsername" placeholder="Digite seu usuário" required>
+                </div>
+                <div class="input-group">
+                    <label for="resetEmail">E-mail cadastrado</label>
+                    <input type="email" id="resetEmail" placeholder="Digite seu e-mail" required>
+                </div>
+                <div class="input-group">
+                    <label for="newPassword">Nova Senha</label>
+                    <input type="password" id="newPassword" placeholder="Digite a nova senha" required>
+                </div>
+                <div class="input-group">
+                    <label for="confirmNewPassword">Confirmar Nova Senha</label>
+                    <input type="password" id="confirmNewPassword" placeholder="Confirme a nova senha" required>
+                </div>
+                <div class="error-message" id="resetErrorMessage"></div>
+                <div class="success-message" id="resetSuccessMessage"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelResetPassword">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Redefinir Senha</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Cadastro de Usuário -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Cadastrar Novo Usuário</h2>
+                <button class="close-btn" id="closeRegisterModal">&times;</button>
+            </div>
+            <form id="registerForm">
+                <div class="input-group">
+                    <label for="registerUsername">Usuário</label>
+                    <input type="text" id="registerUsername" placeholder="Digite um nome de usuário" required>
+                </div>
+                <div class="input-group">
+                    <label for="registerName">Nome Completo</label>
+                    <input type="text" id="registerName" placeholder="Digite o nome completo" required>
+                </div>
+                <div class="input-group">
+                    <label for="registerEmail">E-mail</label>
+                    <input type="email" id="registerEmail" placeholder="Digite o e-mail" required>
+                </div>
+                <div class="input-group">
+                    <label for="registerPassword">Senha</label>
+                    <input type="password" id="registerPassword" placeholder="Digite a senha" required>
+                </div>
+                <div class="input-group">
+                    <label for="registerConfirmPassword">Confirmar Senha</label>
+                    <input type="password" id="registerConfirmPassword" placeholder="Confirme a senha" required>
+                </div>
+                <div class="input-group">
+                    <label for="registerRole">Tipo de Usuário</label>
+                    <select id="registerRole" required>
+                        <option value="">Selecione...</option>
+                        <option value="Portaria">Portaria</option>
+                        <option value="Administrador">Administrador</option>
+                        <option value="Zeladoria">Zeladoria</option>
+                    </select>
+                </div>
+                <div class="error-message" id="registerErrorMessage"></div>
+                <div class="success-message" id="registerSuccessMessage"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelRegister">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Cadastrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Aplicação Principal (oculta inicialmente) -->
     <div id="mainApp">
         <header>
             <div class="header-container">
-                <img src="images/logo.png" alt="Logo" class="logo">
+                <img src="logovivace.png" alt="Logo" class="logo">
                 <h1>Registro de Encomendas Vivace</h1>
                 <nav>
                     <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
@@ -245,6 +493,28 @@
                     </div>
                 </form>
                 
+                <!-- Seção de Administração (visível apenas para administradores) -->
+                <div id="adminSection" class="admin-section" style="display: none;">
+                    <h2><i class="fas fa-users-cog"></i> Gerenciamento de Usuários</h2>
+                    <button id="addUserBtn" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Adicionar Usuário
+                    </button>
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Usuário</th>
+                                <th>Nome</th>
+                                <th>Tipo</th>
+                                <th>E-mail</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Dados serão preenchidos via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
                 <div class="recent-entries">
                     <div class="section-header">
                         <h2><i class="fas fa-history"></i> Registros Recentes</h2>
@@ -297,17 +567,37 @@
 
     <script>
         // Credenciais válidas (em produção, isso deve ser substituído por autenticação segura no servidor)
-        const validUsers = [
-            { username: 'portaria', password: 'vivace123', name: 'Portaria' },
-            { username: 'admin', password: 'admin123', name: 'Administrador' },
-            { username: 'zelador', password: 'zelador123', name: 'Zeladoria' }
+        let validUsers = JSON.parse(localStorage.getItem('validUsers')) || [
+            { username: 'portaria', password: 'vivace123', name: 'Portaria', email: 'portaria@vivace.com', role: 'Portaria' },
+            { username: 'admin', password: 'admin123', name: 'Administrador', email: 'admin@vivace.com', role: 'Administrador' },
+            { username: 'zelador', password: 'zelador123', name: 'Zeladoria', email: 'zelador@vivace.com', role: 'Zeladoria' }
         ];
 
         // Elementos da tela de login
         const loginPage = document.getElementById('loginPage');
         const loginForm = document.getElementById('loginForm');
         const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
         const mainApp = document.getElementById('mainApp');
+
+        // Elementos de redefinição de senha
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+        const closeForgotPasswordModal = document.getElementById('closeForgotPasswordModal');
+        const cancelResetPassword = document.getElementById('cancelResetPassword');
+        const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+        const resetErrorMessage = document.getElementById('resetErrorMessage');
+        const resetSuccessMessage = document.getElementById('resetSuccessMessage');
+
+        // Elementos de cadastro de usuário
+        const registerLink = document.getElementById('registerLink');
+        const registerModal = document.getElementById('registerModal');
+        const closeRegisterModal = document.getElementById('closeRegisterModal');
+        const cancelRegister = document.getElementById('cancelRegister');
+        const registerForm = document.getElementById('registerForm');
+        const registerErrorMessage = document.getElementById('registerErrorMessage');
+        const registerSuccessMessage = document.getElementById('registerSuccessMessage');
+        const addUserBtn = document.getElementById('addUserBtn');
 
         // Atualizar ano no footer
         document.getElementById('currentYear').textContent = new Date().getFullYear();
@@ -326,19 +616,22 @@
             if (user) {
                 // Login bem-sucedido
                 errorMessage.style.display = 'none';
+                successMessage.style.display = 'none';
                 loginPage.style.display = 'none';
                 mainApp.style.display = 'block';
                 
                 // Armazenar informações do usuário (em produção, usar métodos mais seguros)
                 sessionStorage.setItem('loggedIn', 'true');
                 sessionStorage.setItem('username', user.username);
-                sessionStorage.setItem('userRole', user.name);
+                sessionStorage.setItem('userRole', user.role);
+                sessionStorage.setItem('userName', user.name);
                 
                 // Inicializar a aplicação principal
                 initializeApp();
             } else {
                 // Login falhou
                 errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
             }
         });
 
@@ -349,6 +642,11 @@
                 mainApp.style.display = 'block';
                 initializeApp();
             }
+            
+            // Salvar usuários padrão se não existirem
+            if (!localStorage.getItem('validUsers')) {
+                localStorage.setItem('validUsers', JSON.stringify(validUsers));
+            }
         });
 
         // Botão de logout
@@ -356,11 +654,155 @@
             sessionStorage.removeItem('loggedIn');
             sessionStorage.removeItem('username');
             sessionStorage.removeItem('userRole');
+            sessionStorage.removeItem('userName');
             window.location.reload();
+        });
+
+        // Redefinição de senha
+        forgotPasswordLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            forgotPasswordModal.style.display = 'flex';
+            resetErrorMessage.style.display = 'none';
+            resetSuccessMessage.style.display = 'none';
+        });
+
+        closeForgotPasswordModal.addEventListener('click', function() {
+            forgotPasswordModal.style.display = 'none';
+            forgotPasswordForm.reset();
+        });
+
+        cancelResetPassword.addEventListener('click', function() {
+            forgotPasswordModal.style.display = 'none';
+            forgotPasswordForm.reset();
+        });
+
+        forgotPasswordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('resetUsername').value;
+            const email = document.getElementById('resetEmail').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+            
+            resetErrorMessage.style.display = 'none';
+            resetSuccessMessage.style.display = 'none';
+            
+            // Validar senhas
+            if (newPassword !== confirmNewPassword) {
+                resetErrorMessage.textContent = 'As senhas não coincidem.';
+                resetErrorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Verificar se o usuário existe
+            const userIndex = validUsers.findIndex(u => u.username === username && u.email === email);
+            
+            if (userIndex === -1) {
+                resetErrorMessage.textContent = 'Usuário ou e-mail não encontrados.';
+                resetErrorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Atualizar senha
+            validUsers[userIndex].password = newPassword;
+            localStorage.setItem('validUsers', JSON.stringify(validUsers));
+            
+            // Mostrar mensagem de sucesso
+            resetSuccessMessage.textContent = 'Senha redefinida com sucesso!';
+            resetSuccessMessage.style.display = 'block';
+            
+            // Limpar formulário e fechar modal após 2 segundos
+            setTimeout(() => {
+                forgotPasswordForm.reset();
+                forgotPasswordModal.style.display = 'none';
+            }, 2000);
+        });
+
+        // Cadastro de usuário
+        registerLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            registerModal.style.display = 'flex';
+            registerErrorMessage.style.display = 'none';
+            registerSuccessMessage.style.display = 'none';
+        });
+
+        closeRegisterModal.addEventListener('click', function() {
+            registerModal.style.display = 'none';
+            registerForm.reset();
+        });
+
+        cancelRegister.addEventListener('click', function() {
+            registerModal.style.display = 'none';
+            registerForm.reset();
+        });
+
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('registerUsername').value;
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const role = document.getElementById('registerRole').value;
+            
+            registerErrorMessage.style.display = 'none';
+            registerSuccessMessage.style.display = 'none';
+            
+            // Validar campos
+            if (password !== confirmPassword) {
+                registerErrorMessage.textContent = 'As senhas não coincidem.';
+                registerErrorMessage.style.display = 'block';
+                return;
+            }
+            
+            if (!username || !name || !email || !password || !role) {
+                registerErrorMessage.textContent = 'Preencha todos os campos.';
+                registerErrorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Verificar se o usuário já existe
+            const userExists = validUsers.some(u => u.username === username);
+            
+            if (userExists) {
+                registerErrorMessage.textContent = 'Nome de usuário já existe. Escolha outro.';
+                registerErrorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Criar novo usuário
+            const newUser = {
+                username,
+                password,
+                name,
+                email,
+                role
+            };
+            
+            validUsers.push(newUser);
+            localStorage.setItem('validUsers', JSON.stringify(validUsers));
+            
+            // Mostrar mensagem de sucesso
+            registerSuccessMessage.textContent = 'Usuário cadastrado com sucesso!';
+            registerSuccessMessage.style.display = 'block';
+            
+            // Limpar formulário e fechar modal após 2 segundos
+            setTimeout(() => {
+                registerForm.reset();
+                registerModal.style.display = 'none';
+            }, 2000);
         });
 
         // Inicializar a aplicação principal
         function initializeApp() {
+            // Mostrar seção de administração apenas para administradores
+            const userRole = sessionStorage.getItem('userRole');
+            if (userRole === 'Administrador') {
+                document.getElementById('adminSection').style.display = 'block';
+                carregarUsuarios();
+            }
+
             // Configurações de notificação
             const notificationConfig = {
                 emailEnabled: false,
@@ -389,6 +831,190 @@
                 }
                 
                 e.target.value = value;
+            });
+
+            // Função para carregar usuários na tabela
+            function carregarUsuarios() {
+                const usersTableBody = document.getElementById('usersTableBody');
+                if (!usersTableBody) return;
+                
+                usersTableBody.innerHTML = '';
+                
+                validUsers.forEach(user => {
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>${user.username}</td>
+                        <td>${user.name}</td>
+                        <td>${user.role}</td>
+                        <td>${user.email}</td>
+                        <td class="action-btns">
+                            <button class="btn btn-primary btn-sm edit-user" data-username="${user.username}">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            ${user.role !== 'Administrador' ? 
+                            `<button class="btn btn-danger btn-sm delete-user" data-username="${user.username}">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>` : ''}
+                        </td>
+                    `;
+                    
+                    usersTableBody.appendChild(row);
+                });
+                
+                // Adicionar eventos aos botões
+                document.querySelectorAll('.edit-user').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const username = this.getAttribute('data-username');
+                        editarUsuario(username);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-user').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const username = this.getAttribute('data-username');
+                        if (confirm(`Tem certeza que deseja excluir o usuário ${username}?`)) {
+                            excluirUsuario(username);
+                        }
+                    });
+                });
+            }
+
+            // Função para editar usuário
+            function editarUsuario(username) {
+                const user = validUsers.find(u => u.username === username);
+                if (!user) return;
+                
+                // Preencher modal de cadastro com dados do usuário
+                document.getElementById('registerUsername').value = user.username;
+                document.getElementById('registerName').value = user.name;
+                document.getElementById('registerEmail').value = user.email;
+                document.getElementById('registerRole').value = user.role;
+                
+                // Mostrar modal
+                registerModal.style.display = 'flex';
+                registerErrorMessage.style.display = 'none';
+                registerSuccessMessage.style.display = 'none';
+                
+                // Alterar comportamento do formulário para edição
+                registerForm.onsubmit = function(e) {
+                    e.preventDefault();
+                    
+                    const newName = document.getElementById('registerName').value;
+                    const newEmail = document.getElementById('registerEmail').value;
+                    const newPassword = document.getElementById('registerPassword').value;
+                    const confirmPassword = document.getElementById('registerConfirmPassword').value;
+                    const newRole = document.getElementById('registerRole').value;
+                    
+                    registerErrorMessage.style.display = 'none';
+                    registerSuccessMessage.style.display = 'none';
+                    
+                    // Validar senhas se for alteração
+                    if (newPassword && newPassword !== confirmPassword) {
+                        registerErrorMessage.textContent = 'As senhas não coincidem.';
+                        registerErrorMessage.style.display = 'block';
+                        return;
+                    }
+                    
+                    // Atualizar usuário
+                    user.name = newName;
+                    user.email = newEmail;
+                    user.role = newRole;
+                    
+                    if (newPassword) {
+                        user.password = newPassword;
+                    }
+                    
+                    localStorage.setItem('validUsers', JSON.stringify(validUsers));
+                    
+                    // Mostrar mensagem de sucesso
+                    registerSuccessMessage.textContent = 'Usuário atualizado com sucesso!';
+                    registerSuccessMessage.style.display = 'block';
+                    
+                    // Limpar formulário e fechar modal após 2 segundos
+                    setTimeout(() => {
+                        registerForm.reset();
+                        registerModal.style.display = 'none';
+                        carregarUsuarios();
+                        registerForm.onsubmit = registerFormDefaultSubmit; // Restaurar comportamento padrão
+                    }, 2000);
+                };
+            }
+
+            // Função para excluir usuário
+            function excluirUsuario(username) {
+                validUsers = validUsers.filter(u => u.username !== username);
+                localStorage.setItem('validUsers', JSON.stringify(validUsers));
+                carregarUsuarios();
+            }
+
+            // Comportamento padrão do formulário de cadastro
+            function registerFormDefaultSubmit(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('registerUsername').value;
+                const name = document.getElementById('registerName').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('registerConfirmPassword').value;
+                const role = document.getElementById('registerRole').value;
+                
+                registerErrorMessage.style.display = 'none';
+                registerSuccessMessage.style.display = 'none';
+                
+                // Validar campos
+                if (password !== confirmPassword) {
+                    registerErrorMessage.textContent = 'As senhas não coincidem.';
+                    registerErrorMessage.style.display = 'block';
+                    return;
+                }
+                
+                if (!username || !name || !email || !password || !role) {
+                    registerErrorMessage.textContent = 'Preencha todos os campos.';
+                    registerErrorMessage.style.display = 'block';
+                    return;
+                }
+                
+                // Verificar se o usuário já existe
+                const userExists = validUsers.some(u => u.username === username);
+                
+                if (userExists) {
+                    registerErrorMessage.textContent = 'Nome de usuário já existe. Escolha outro.';
+                    registerErrorMessage.style.display = 'block';
+                    return;
+                }
+                
+                // Criar novo usuário
+                const newUser = {
+                    username,
+                    password,
+                    name,
+                    email,
+                    role
+                };
+                
+                validUsers.push(newUser);
+                localStorage.setItem('validUsers', JSON.stringify(validUsers));
+                
+                // Mostrar mensagem de sucesso
+                registerSuccessMessage.textContent = 'Usuário cadastrado com sucesso!';
+                registerSuccessMessage.style.display = 'block';
+                
+                // Limpar formulário e fechar modal após 2 segundos
+                setTimeout(() => {
+                    registerForm.reset();
+                    registerModal.style.display = 'none';
+                    carregarUsuarios();
+                }, 2000);
+            }
+
+            // Botão para adicionar usuário (na área administrativa)
+            addUserBtn?.addEventListener('click', function() {
+                registerForm.reset();
+                registerModal.style.display = 'flex';
+                registerErrorMessage.style.display = 'none';
+                registerSuccessMessage.style.display = 'none';
+                registerForm.onsubmit = registerFormDefaultSubmit;
             });
 
             // Função para enviar notificação
@@ -454,7 +1080,8 @@
                     observacoes,
                     status: 'pendente',
                     notificado: false,
-                    dataRegistro: new Date().toISOString()
+                    dataRegistro: new Date().toISOString(),
+                    registradoPor: sessionStorage.getItem('username')
                 };
                 
                 encomendas.unshift(novaEncomenda);
@@ -587,6 +1214,7 @@
                           `Telefone: ${encomenda.telefone || 'Não informado'}\n` +
                           `Local de Armazenamento: ${encomenda.localArmazenamento}\n` +
                           `Status: ${encomenda.notificado ? 'Notificado' : 'Pendente'}\n` +
+                          `Registrado por: ${encomenda.registradoPor || 'Sistema'}\n` +
                           `Observações: ${encomenda.observacoes || 'Nenhuma'}`);
                 }
             }
